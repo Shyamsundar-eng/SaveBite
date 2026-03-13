@@ -50,6 +50,7 @@ const NGOMap: React.FC = () => {
         name: '',
         address: '',
         phone: '',
+        email: '',
         type: 'Food Bank'
     });
 
@@ -221,12 +222,13 @@ const NGOMap: React.FC = () => {
             lng: center.lng + lngOffset,
             address: regForm.address,
             phone: regForm.phone,
+            email: regForm.email.trim() || undefined,
             needs: []
         };
 
         setAllNgos(prev => [...prev, newNgo]);
         setIsRegistering(false);
-        setRegForm({ name: '', address: '', phone: '', type: 'Food Bank' });
+        setRegForm({ name: '', address: '', phone: '', email: '', type: 'Food Bank' });
         
         // Select the new NGO and fly to it
         setTimeout(() => {
@@ -482,6 +484,21 @@ const NGOMap: React.FC = () => {
                                             onChange={handlePhoneChange}
                                         />
                                     </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label htmlFor="orgEmail" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Email (optional)</label>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                                    <input 
+                                        id="orgEmail"
+                                        type="email" 
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-slate-800 border border-transparent focus:bg-white dark:focus:bg-slate-950 focus:border-[#00796B] focus:ring-2 focus:ring-[#00796B]/20 rounded-xl outline-none transition-all"
+                                        placeholder="contact@organization.org"
+                                        value={regForm.email}
+                                        onChange={e => setRegForm({ ...regForm, email: e.target.value })}
+                                    />
                                 </div>
                             </div>
 
