@@ -21,9 +21,9 @@ L.Marker.prototype.options.icon = DefaultIcon;
 // Generate realistic mock data around San Francisco (Initial Fallback)
 const generateNGOs = (): NGO[] => {
     const baseNGOs: NGO[] = [
-        { id: '1', name: "Helping Hands Shelter", distance: "1.2 km", rating: 4.8, description: "Provides hot meals to homeless individuals and families in the downtown area.", lat: 37.7749, lng: -122.4194, needs: [], phone: "5551234567" },
-        { id: '2', name: "City Food Bank", distance: "3.5 km", rating: 4.5, description: "Distributes grocery packages to low-income households weekly.", lat: 37.7849, lng: -122.4094, needs: [], phone: "5559876543" },
-        { id: '3', name: "Green Earth Rescue", distance: "5.0 km", rating: 4.9, description: "Focuses on rescuing perishable produce from wholesalers.", lat: 37.7649, lng: -122.4294, needs: [], phone: "5554567890" },
+        { id: '1', name: "Helping Hands Shelter", distance: "1.2 km", rating: 4.8, description: "Provides hot meals to homeless individuals and families in the downtown area.", lat: 37.7749, lng: -122.4194, needs: [] },
+        { id: '2', name: "City Food Bank", distance: "3.5 km", rating: 4.5, description: "Distributes grocery packages to low-income households weekly.", lat: 37.7849, lng: -122.4094, needs: [] },
+        { id: '3', name: "Green Earth Rescue", distance: "5.0 km", rating: 4.9, description: "Focuses on rescuing perishable produce from wholesalers.", lat: 37.7649, lng: -122.4294, needs: [] },
     ];
     return baseNGOs;
 };
@@ -359,42 +359,41 @@ const NGOMap: React.FC = () => {
                                 </p>
                             )}
                             {showContactInfo && (
-                                <div className="animate-in fade-in slide-in-from-top-1 bg-slate-50 p-3 rounded-lg mt-2 space-y-2">
-                                    <p className="text-[13px] text-[#212121] flex items-center gap-2 font-medium">
-                                        <Phone size={14} className="text-[#00796B]" />
-                                        <a
-                                          href={selectedNGO.phone ? `tel:${selectedNGO.phone}` : undefined}
-                                          className="hover:underline"
-                                        >
-                                          {selectedNGO.phone || 'No phone available'}
-                                        </a>
-                                    </p>
-                                    <p className="text-[13px] text-[#212121] flex items-center gap-2 font-medium">
-                                        <Mail size={14} className="text-[#00796B]" />
-                                        {(() => {
-                                          const email = `${selectedNGO.name.replace(/\s+/g, '').toLowerCase()}@org.com`;
-                                          return (
-                                            <a href={`mailto:${email}`} className="hover:underline">
-                                              {email}
+                                <div className="animate-in fade-in slide-in-from-top-1 bg-slate-50 dark:bg-slate-800 p-3 rounded-lg mt-2 space-y-2">
+                                    <p className="text-[13px] text-[#212121] dark:text-slate-200 flex items-center gap-2 font-medium">
+                                        <Phone size={14} className="text-[#00796B] flex-shrink-0" />
+                                        {selectedNGO.phone ? (
+                                            <a href={`tel:${selectedNGO.phone}`} className="hover:underline truncate">
+                                                {selectedNGO.phone}
                                             </a>
-                                          );
-                                        })()}
+                                        ) : (
+                                            <span className="text-slate-500 dark:text-slate-400">Phone not available</span>
+                                        )}
                                     </p>
-                                    <p className="text-[13px] text-[#212121] flex items-center gap-2 font-medium">
-                                        <Globe size={14} className="text-[#00796B]" />
-                                        {(() => {
-                                          const domain = `${selectedNGO.name.replace(/\s+/g, '').toLowerCase()}.org`;
-                                          return (
+                                    <p className="text-[13px] text-[#212121] dark:text-slate-200 flex items-center gap-2 font-medium">
+                                        <Mail size={14} className="text-[#00796B] flex-shrink-0" />
+                                        {selectedNGO.email ? (
+                                            <a href={`mailto:${selectedNGO.email}`} className="hover:underline truncate break-all">
+                                                {selectedNGO.email}
+                                            </a>
+                                        ) : (
+                                            <span className="text-slate-500 dark:text-slate-400">Email not available</span>
+                                        )}
+                                    </p>
+                                    <p className="text-[13px] text-[#212121] dark:text-slate-200 flex items-center gap-2 font-medium">
+                                        <Globe size={14} className="text-[#00796B] flex-shrink-0" />
+                                        {selectedNGO.website ? (
                                             <a
-                                              href={`https://www.${domain}`}
-                                              target="_blank"
-                                              rel="noreferrer"
-                                              className="hover:underline"
+                                                href={selectedNGO.website.startsWith('http') ? selectedNGO.website : `https://${selectedNGO.website}`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="hover:underline truncate break-all"
                                             >
-                                              www.{domain}
+                                                {selectedNGO.website.replace(/^https?:\/\//, '')}
                                             </a>
-                                          );
-                                        })()}
+                                        ) : (
+                                            <span className="text-slate-500 dark:text-slate-400">Website not available</span>
+                                        )}
                                     </p>
                                 </div>
                             )}

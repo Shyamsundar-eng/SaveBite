@@ -160,17 +160,22 @@ export const searchNearbyNGOs = async (lat: number, lng: number): Promise<NGO[]>
   try {
     const response = await getAI().models.generateContent({
       model: "gemini-2.5-flash",
-      contents: `Find 10 food banks, soup kitchens, or food rescue organizations near this location (Lat: ${lat}, Lng: ${lng}).
-      For each place, provide:
-      1. Name
-      2. Estimated Latitude (if available from map data, otherwise estimate near the user)
-      3. Estimated Longitude
-      4. Address
-      5. A short description
+      contents: `Find up to 10 real food banks, soup kitchens, or food rescue organizations near this location (Lat: ${lat}, Lng: ${lng}).
+      Use the map/place data to get REAL contact information. For each place provide ONLY information that comes from the place listing—do not invent or guess phone, email, or website.
 
-      Format the output as a strict JSON array of objects with keys: "name", "lat" (number), "lng" (number), "address", "description", "rating" (number between 3.5 and 5.0).
-      Do not include any other text, markdown formatting, or explanations. Start with [. End with ].
-      If specific coordinates are not available, use ${lat} and ${lng} with a small random offset (approx 0.01 degrees) for visualization.
+      For each place provide:
+      1. name (string)
+      2. lat (number), lng (number) — from place data or estimate near user
+      3. address (string, full address from listing)
+      4. description (short description of the organization)
+      5. rating (number 3.5–5.0 if available)
+      6. phone (string, real phone number from the place listing only; omit or null if not found)
+      7. email (string, real email from the place listing only; omit or null if not found)
+      8. website (string, real website URL from the place listing only; omit or null if not found)
+
+      Output a strict JSON array of objects with keys: "name", "lat", "lng", "address", "description", "rating", "phone", "email", "website".
+      Use null for phone, email, or website when the place data does not include them. Do not make up or generate fake contact details.
+      No other text or markdown. Start with [. End with ].
       `,
       config: {
         tools: [{ googleMaps: {} }],
@@ -198,13 +203,16 @@ export const searchNearbyNGOs = async (lat: number, lng: number): Promise<NGO[]>
             return data.map((item: any, i: number) => ({
                 id: `real-${Date.now()}-${i}`,
                 name: item.name,
-                distance: "Nearby", // Simplified for now
-                rating: item.rating || 4.5,
+                distance: "Nearby",
+                rating: item.rating ?? 4.5,
                 description: item.description || "Food assistance organization.",
-                lat: item.lat || lat + (Math.random() - 0.5) * 0.02,
-                lng: item.lng || lng + (Math.random() - 0.5) * 0.02,
+                lat: item.lat ?? lat + (Math.random() - 0.5) * 0.02,
+                lng: item.lng ?? lng + (Math.random() - 0.5) * 0.02,
                 address: item.address,
-                needs: [FoodCategory.PRODUCE, FoodCategory.CANNED] // Default needs
+                phone: item.phone && String(item.phone).trim() ? String(item.phone).trim() : undefined,
+                email: item.email && String(item.email).trim() ? String(item.email).trim() : undefined,
+                website: item.website && String(item.website).trim() ? String(item.website).trim() : undefined,
+                needs: [FoodCategory.PRODUCE, FoodCategory.CANNED]
             }));
         }
     } catch (e) {

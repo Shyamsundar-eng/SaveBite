@@ -24,10 +24,10 @@ interface DonationProps {
 }
 
 const DEFAULT_NGOS: NGO[] = [
-  { id: '1', name: "Helping Hands Shelter", distance: "1.2 km", urgency: "High", lat: 37.7749, lng: -122.4194, description: "Shelter", needs: [], rating: 4.8, phone: "5551234567" },
-  { id: '2', name: "City Food Bank", distance: "3.5 km", urgency: "Medium", lat: 37.7849, lng: -122.4094, description: "Food Bank", needs: [], rating: 4.5, phone: "5559876543" },
-  { id: '3', name: "Green Earth Rescue", distance: "5.0 km", urgency: "Low", lat: 37.7649, lng: -122.4294, description: "Community Fridge", needs: [], rating: 4.9, phone: "5554567890" },
-  { id: '4', name: "St. Mary's Kitchen", distance: "2.1 km", urgency: "High", lat: 37.7699, lng: -122.4100, description: "Soup Kitchen", needs: [], rating: 4.7, phone: "5557890123" },
+  { id: '1', name: "Helping Hands Shelter", distance: "1.2 km", urgency: "High", lat: 37.7749, lng: -122.4194, description: "Shelter", needs: [], rating: 4.8 },
+  { id: '2', name: "City Food Bank", distance: "3.5 km", urgency: "Medium", lat: 37.7849, lng: -122.4094, description: "Food Bank", needs: [], rating: 4.5 },
+  { id: '3', name: "Green Earth Rescue", distance: "5.0 km", urgency: "Low", lat: 37.7649, lng: -122.4294, description: "Community Fridge", needs: [], rating: 4.9 },
+  { id: '4', name: "St. Mary's Kitchen", distance: "2.1 km", urgency: "High", lat: 37.7699, lng: -122.4100, description: "Soup Kitchen", needs: [], rating: 4.7 },
 ];
 
 const Stepper: React.FC<{ currentStep: number }> = ({ currentStep }) => {
@@ -439,12 +439,14 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
                 >
                   {t('common.dashboard', 'Dashboard')}
                 </button>
-                <button
-                  onClick={() => window.open(`tel:${selectedNgo?.phone || '5550123000'}`)}
-                  className="w-full h-[52px] border border-[#00796B] text-[#00796B] rounded-xl font-bold flex items-center justify-center gap-2"
-                >
-                  <Phone size={18} /> {t('donation.call_recipient', 'Call Recipient')}
-                </button>
+                {selectedNgo?.phone && (
+                  <button
+                    onClick={() => window.open(`tel:${selectedNgo.phone}`)}
+                    className="w-full h-[52px] border border-[#00796B] text-[#00796B] rounded-xl font-bold flex items-center justify-center gap-2"
+                  >
+                    <Phone size={18} /> {t('donation.call_recipient', 'Call Recipient')}
+                  </button>
+                )}
               </div>
           </div>
       );
