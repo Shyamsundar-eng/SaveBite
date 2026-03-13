@@ -159,7 +159,7 @@ const AppContent = ({ auth, stats, inventory, recipes, handleLogout, handleAddIt
               <Route path="/" element={<Dashboard user={auth.user} stats={stats} inventory={inventory} />} />
               <Route path="/inventory" element={<Inventory items={inventory} onAddItem={handleAddItem} onUpdateStatus={handleUpdateStatus} onDeleteItem={handleDeleteItem} onEditItem={handleEditItem} />} />
               <Route path="/recipes" element={<Recipes inventory={inventory} recipes={recipes} onUpdateRecipes={handleUpdateRecipes} onCookRecipe={handleCookRecipe} />} />
-              <Route path="/donate" element={<Donation inventory={inventory} onDonateComplete={handleDonateComplete} />} />
+              <Route path="/donate" element={<Donation inventory={inventory} stats={stats} onDonateComplete={handleDonateComplete} />} />
               <Route path="/ngos" element={<NGOMap />} />
               <Route path="/analytics" element={<Analytics stats={stats} />} />
               <Route path="/badges" element={<Badges stats={stats} />} />

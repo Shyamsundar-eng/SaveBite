@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { FoodItem, NGO, FoodCategory } from '../types';
-import { ChevronLeft, Check, ShoppingBag, Map as MapIcon, List, MapPin, AlertCircle, Star, Loader2, Phone, Calendar, Truck, MessageSquare, Clock, Info } from 'lucide-react';
+import { FoodItem, NGO, FoodCategory, UserStats } from '../types';
+import { ChevronLeft, Check, ShoppingBag, Map as MapIcon, List, MapPin, AlertCircle, Star, Loader2, Phone, Calendar, Truck, MessageSquare, Clock, Info, ImageIcon, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import L from 'leaflet';
 import { searchNearbyNGOs } from '../services/geminiService';
@@ -20,6 +20,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 interface DonationProps {
   inventory: FoodItem[];
+  stats?: UserStats;
   onDonateComplete: (itemIds: string[], amount: number) => void;
 }
 
@@ -30,13 +31,14 @@ const DEFAULT_NGOS: NGO[] = [
   { id: '4', name: "St. Mary's Kitchen", distance: "2.1 km", urgency: "High", lat: 37.7699, lng: -122.4100, description: "Soup Kitchen", needs: [], rating: 4.7 },
 ];
 
-const Stepper: React.FC<{ currentStep: number }> = ({ currentStep }) => {
-  const steps = [1, 2, 3];
+const Stepper: React.FC<{ currentStep: number; totalSteps?: number }> = ({ currentStep, totalSteps = 4 }) => {
+  const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);
+  const displayStep = currentStep > totalSteps ? totalSteps : currentStep;
   return (
     <div className="flex items-center justify-center h-[48px] mt-[12px]">
       {steps.map((step, index) => {
-        const isCompleted = step < currentStep;
-        const isActive = step === currentStep;
+        const isCompleted = step < displayStep;
+        const isActive = step === displayStep;
         let bgColor = '#E0E0E0';
         let textColor = '#757575';
         if (isCompleted || isActive) {
@@ -85,7 +87,7 @@ const DonationItemRow: React.FC<{
   );
 };
 
-const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
+const Donation: React.FC<DonationProps> = ({ inventory, stats, onDonateComplete }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -95,6 +97,8 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
   const [loadingNGOs, setLoadingNGOs] = useState(false);
   const [selectedNgoId, setSelectedNgoId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [verificationSubmittedAt, setVerificationSubmittedAt] = useState<number | null>(null);
+  const [ngoRejected, setNgoRejected] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
 
@@ -150,10 +154,37 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
 
   const handleContinue = () => {
       if (currentStep < 3) setCurrentStep(prev => prev + 1);
-      else {
-          onDonateComplete(selectedItems, selectedItems.length * 10);
+      else if (currentStep === 3) {
+          setVerificationSubmittedAt(Date.now());
+          setNgoRejected(false);
           setCurrentStep(4);
       }
+  };
+
+  const donorRating = useMemo(() => {
+      if (!stats?.history?.length) return 4.8;
+      const withReview = stats.history.filter(h => h.review?.rating != null);
+      if (withReview.length === 0) return 4.8;
+      return Math.round((withReview.reduce((a, h) => a + (h.review!.rating ?? 0), 0) / withReview.length) * 10) / 10;
+  }, [stats]);
+
+  const preparationTimeLabel = useMemo(() => {
+      if (!verificationSubmittedAt) return t('donation.prep_just_now', 'Just now');
+      const mins = Math.floor((Date.now() - verificationSubmittedAt) / 60000);
+      if (mins < 1) return t('donation.prep_just_now', 'Just now');
+      if (mins < 60) return t('donation.prep_mins_ago', '{{count}} min ago', { count: mins });
+      const hours = Math.floor(mins / 60);
+      return t('donation.prep_hours_ago', 'Cooked {{count}} hours ago', { count: hours });
+  }, [verificationSubmittedAt, t]);
+
+  const handleNgoAccept = () => {
+      onDonateComplete(selectedItems, selectedItems.length * 10);
+      setCurrentStep(5);
+  };
+
+  const handleNgoReject = () => {
+      setNgoRejected(true);
+      setCurrentStep(3);
   };
 
   useEffect(() => {
@@ -417,11 +448,81 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
       );
   }
 
-  const renderStep4 = () => {
+  const renderStep4Verification = () => {
+      const selectedNgo = ngos.find(n => n.id === selectedNgoId);
+      const donationPhotoUrl = selectedFoodObjects.find(i => i.imageUrl)?.imageUrl;
+      return (
+        <div className="flex-1 overflow-y-auto px-[16px] pb-[24px]">
+            <div className="mt-[24px] mb-[20px]">
+                <h2 className="text-[20px] font-[700] text-[#212121] dark:text-white">
+                  {t('donation.verification_title', 'NGO Acceptance Verification')}
+                </h2>
+                <p className="text-[14px] text-[#757575] dark:text-slate-400 mt-[2px]">
+                  {t('donation.verification_subtitle', 'Before accepting, the recipient can review donor info and food details.')}
+                </p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+                <div className="p-4 border-b border-slate-100 dark:border-slate-800">
+                    <p className="text-xs font-bold text-[#00796B] uppercase tracking-wider mb-3">
+                      {t('donation.verification_what_ngo_sees', 'What the NGO sees')}
+                    </p>
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm text-[#757575] dark:text-slate-400">{t('donation.donor_rating', 'Donor rating')}</span>
+                            <span className="flex items-center gap-1 font-bold text-[#212121] dark:text-white">
+                                <Star size={16} fill="#FFC107" className="text-[#FFC107]" /> {donorRating}
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm text-[#757575] dark:text-slate-400">{t('donation.food_prep_time', 'Food preparation time')}</span>
+                            <span className="text-sm font-semibold text-[#212121] dark:text-white">{preparationTimeLabel}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm text-[#757575] dark:text-slate-400 shrink-0">{t('donation.uploaded_photo', 'Uploaded photo')}</span>
+                            {donationPhotoUrl ? (
+                                <div className="flex-1 min-w-0">
+                                    <img src={donationPhotoUrl} alt="" className="h-20 w-20 rounded-xl object-cover border border-slate-200 dark:border-slate-700" />
+                                    <span className="text-xs font-semibold text-green-600 dark:text-green-400 mt-1 inline-block">{t('donation.image_verified', 'Image verified')}</span>
+                                </div>
+                            ) : (
+                                <div className="h-20 w-20 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                                    <ImageIcon size={24} className="text-slate-400" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                <div className="p-4 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={handleNgoReject}
+                      className="flex-1 h-[48px] border-2 border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                    >
+                      <X size={18} /> {t('donation.reject', 'Reject')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNgoAccept}
+                      className="flex-1 h-[48px] bg-[#00796B] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg hover:bg-[#00695C] transition-colors"
+                    >
+                      <Check size={18} /> {t('donation.accept', 'Accept')}
+                    </button>
+                </div>
+            </div>
+            {ngoRejected && (
+                <p className="mt-4 text-sm text-amber-700 dark:text-amber-400 font-medium text-center">
+                  {t('donation.ngo_declined', 'NGO declined this offer. You can edit handover details and try again.')}
+                </p>
+            )}
+        </div>
+      );
+  };
+
+  const renderStep5Success = () => {
       const selectedNgo = ngos.find(n => n.id === selectedNgoId);
       return (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center animate-in zoom-in-95 duration-300">
-              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6"><Check size={48} className="text-green-600" /></div>
+              <div className="w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6"><Check size={48} className="text-green-600" /></div>
               <h2 className="text-2xl font-bold mb-2 dark:text-white">
                 {t('donation.step4_title', 'Donation Delivered!')}
               </h2>
@@ -450,11 +551,11 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
               </div>
           </div>
       );
-  }
+  };
 
   return (
     <div className="h-screen bg-white dark:bg-slate-950 flex flex-col relative">
-      {currentStep < 4 && (
+      {currentStep < 5 && (
         <header className="pt-[12px] px-[16px] flex flex-col items-center relative z-20 bg-white dark:bg-slate-950">
             <div className="w-full h-[44px] flex items-center justify-between">
               <button
@@ -468,17 +569,20 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
                   ? t('donation.header_step1', 'Select Safe Food')
                   : currentStep === 2
                   ? t('donation.header_step2', 'Choose Recipient')
-                  : t('donation.header_step3', 'Coordinate Handover')}
+                  : currentStep === 3
+                  ? t('donation.header_step3', 'Coordinate Handover')
+                  : t('donation.verification_title', 'NGO Verification')}
               </h1>
               <div className="w-[44px]" />
             </div>
         </header>
       )}
-      {currentStep < 4 && <Stepper currentStep={currentStep} />}
+      {currentStep < 5 && <Stepper currentStep={currentStep} totalSteps={4} />}
       {currentStep === 1 && renderStep1()}
       {currentStep === 2 && renderStep2()}
       {currentStep === 3 && renderStep3()}
-      {currentStep === 4 && renderStep4()}
+      {currentStep === 4 && renderStep4Verification()}
+      {currentStep === 5 && renderStep5Success()}
       {(donatableItems.length > 0 && currentStep < 4) && (
           <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-slate-950 pt-[16px] pb-[32px] px-[16px] shadow-[0_-4px_12px_rgba(0,0,0,0.05)] border-t dark:border-slate-800 z-30">
               <button 
