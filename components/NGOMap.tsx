@@ -361,13 +361,40 @@ const NGOMap: React.FC = () => {
                             {showContactInfo && (
                                 <div className="animate-in fade-in slide-in-from-top-1 bg-slate-50 p-3 rounded-lg mt-2 space-y-2">
                                     <p className="text-[13px] text-[#212121] flex items-center gap-2 font-medium">
-                                        <Phone size={14} className="text-[#00796B]" /> {selectedNGO.phone || 'No phone available'}
+                                        <Phone size={14} className="text-[#00796B]" />
+                                        <a
+                                          href={selectedNGO.phone ? `tel:${selectedNGO.phone}` : undefined}
+                                          className="hover:underline"
+                                        >
+                                          {selectedNGO.phone || 'No phone available'}
+                                        </a>
                                     </p>
                                     <p className="text-[13px] text-[#212121] flex items-center gap-2 font-medium">
-                                        <Mail size={14} className="text-[#00796B]" /> {selectedNGO.name.replace(/\s+/g, '').toLowerCase()}@org.com
+                                        <Mail size={14} className="text-[#00796B]" />
+                                        {(() => {
+                                          const email = `${selectedNGO.name.replace(/\s+/g, '').toLowerCase()}@org.com`;
+                                          return (
+                                            <a href={`mailto:${email}`} className="hover:underline">
+                                              {email}
+                                            </a>
+                                          );
+                                        })()}
                                     </p>
                                     <p className="text-[13px] text-[#212121] flex items-center gap-2 font-medium">
-                                        <Globe size={14} className="text-[#00796B]" /> www.{selectedNGO.name.replace(/\s+/g, '').toLowerCase()}.org
+                                        <Globe size={14} className="text-[#00796B]" />
+                                        {(() => {
+                                          const domain = `${selectedNGO.name.replace(/\s+/g, '').toLowerCase()}.org`;
+                                          return (
+                                            <a
+                                              href={`https://www.${domain}`}
+                                              target="_blank"
+                                              rel="noreferrer"
+                                              className="hover:underline"
+                                            >
+                                              www.{domain}
+                                            </a>
+                                          );
+                                        })()}
                                     </p>
                                 </div>
                             )}

@@ -12,11 +12,13 @@
     "@google/genai": "^1.34.0",
     "@playwright/test": "^1.57.0",
     "firebase": "^12.10.0",
+    "i18next": "^25.8.18",
     "leaflet": "1.9.4",
     "leaflet.markercluster": "1.5.3",
     "lucide-react": "^0.562.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-i18next": "^16.5.8",
     "react-router-dom": "^7.11.0",
     "recharts": "^3.6.0"
   },

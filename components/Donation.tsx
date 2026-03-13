@@ -4,6 +4,7 @@ import { ChevronLeft, Check, ShoppingBag, Map as MapIcon, List, MapPin, AlertCir
 import { useNavigate, useLocation } from 'react-router-dom';
 import L from 'leaflet';
 import { searchNearbyNGOs } from '../services/geminiService';
+import { useTranslation } from 'react-i18next';
 
 // Fix Leaflet's default icon path issues
 const DefaultIcon = L.icon({
@@ -87,6 +88,7 @@ const DonationItemRow: React.FC<{
 const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [ngos, setNgos] = useState<NGO[]>(DEFAULT_NGOS);
@@ -195,8 +197,12 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
   const renderStep1 = () => (
     <>
         <div className="px-[16px] mt-[24px] mb-[8px]">
-            <h2 className="text-[20px] font-[700] text-[#212121] dark:text-white">Select Items to Donate</h2>
-            <p className="text-[14px] text-[#757575] dark:text-slate-400 mt-[2px]">Tap items to add. Expired items are hidden for safety.</p>
+            <h2 className="text-[20px] font-[700] text-[#212121] dark:text-white">
+              {t('donation.step1_title', 'Select Items to Donate')}
+            </h2>
+            <p className="text-[14px] text-[#757575] dark:text-slate-400 mt-[2px]">
+              {t('donation.step1_subtitle', 'Tap items to add. Expired items are hidden for safety.')}
+            </p>
         </div>
         <div className="flex-1 overflow-y-auto pb-[100px]">
             {donatableItems.length > 0 ? (
@@ -206,9 +212,21 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
             ) : (
                 <div className="flex flex-col items-center justify-center pt-[60px] px-[32px] text-center">
                      <ShoppingBag size={48} className="text-[#E0E0E0] mb-[16px]" />
-                     <h3 className="text-[16px] font-[600] text-[#212121] dark:text-white mb-[8px]">No valid food items available</h3>
-                     <p className="text-sm text-slate-500 mb-6">Expired food items cannot be donated through our platform to ensure recipient safety.</p>
-                     <button onClick={() => navigate('/inventory')} className="bg-[#00796B] text-white h-[44px] px-[24px] rounded-[8px] font-[600]">Check Inventory</button>
+                     <h3 className="text-[16px] font-[600] text-[#212121] dark:text-white mb-[8px]">
+                       {t('donation.empty_title', 'No valid food items available')}
+                     </h3>
+                     <p className="text-sm text-slate-500 mb-6">
+                       {t(
+                         'donation.empty_description',
+                         'Expired food items cannot be donated through our platform to ensure recipient safety.'
+                       )}
+                     </p>
+                     <button
+                       onClick={() => navigate('/inventory')}
+                       className="bg-[#00796B] text-white h-[44px] px-[24px] rounded-[8px] font-[600]"
+                     >
+                       {t('donation.check_inventory', 'Check Inventory')}
+                     </button>
                 </div>
             )}
         </div>
@@ -219,8 +237,12 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
     <div className="flex flex-col h-full overflow-hidden">
         <div className="px-[16px] mt-[24px] mb-[16px] flex justify-between items-end">
              <div>
-                <h2 className="text-[20px] font-[700] text-[#212121] dark:text-white">Choose Recipient</h2>
-                <p className="text-[14px] text-[#757575] dark:text-slate-400 mt-[2px]">Who receives this donation?</p>
+                <h2 className="text-[20px] font-[700] text-[#212121] dark:text-white">
+                  {t('donation.step2_title', 'Choose Recipient')}
+                </h2>
+                <p className="text-[14px] text-[#757575] dark:text-slate-400 mt-[2px]">
+                  {t('donation.step2_subtitle', 'Who receives this donation?')}
+                </p>
              </div>
              <div className="flex bg-[#F5F5F5] dark:bg-slate-800 p-1 rounded-lg">
                  <button onClick={() => setViewMode('list')} className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-white dark:bg-slate-700 shadow-sm text-[#00796B]' : 'text-[#757575]'}`}><List size={20} /></button>
@@ -228,7 +250,14 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
              </div>
         </div>
         <div className="flex-1 overflow-y-auto pb-[100px]">
-            {loadingNGOs && viewMode === 'list' && <div className="px-[16px] mb-4 flex items-center gap-2 text-[#00796B]"><Loader2 className="animate-spin" size={16} /><span className="text-sm">Finding nearby organizations...</span></div>}
+            {loadingNGOs && viewMode === 'list' && (
+              <div className="px-[16px] mb-4 flex items-center gap-2 text-[#00796B]">
+                <Loader2 className="animate-spin" size={16} />
+                <span className="text-sm">
+                  {t('donation.finding_ngos', 'Finding nearby organizations...')}
+                </span>
+              </div>
+            )}
             {viewMode === 'list' ? (
                 <div className="px-[16px] space-y-[12px]">
                     {ngos.map(ngo => (
@@ -236,7 +265,11 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
                             <div>
                                 <div className="flex items-center gap-2 mb-1">
                                     <h3 className="font-[600] text-[#212121] dark:text-white">{ngo.name}</h3>
-                                    {ngo.urgency === 'High' && <span className="bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"><AlertCircle size={10} /> High Need</span>}
+                                    {ngo.urgency === 'High' && (
+                                      <span className="bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                        <AlertCircle size={10} />{t('donation.high_need', 'High Need')}
+                                      </span>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-3 text-[13px] text-[#757575]"><span className="flex items-center gap-1"><MapPin size={12} /> {ngo.distance}</span><span>•</span><span>{ngo.description || ngo.name}</span></div>
                             </div>
@@ -254,13 +287,19 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
       return (
         <div className="flex-1 overflow-y-auto px-[16px] pb-[100px]">
             <div className="mt-[24px] mb-[20px]">
-                <h2 className="text-[20px] font-[700] text-[#212121] dark:text-white">Coordinate Handover</h2>
-                <p className="text-[14px] text-[#757575] dark:text-slate-400 mt-[2px]">Review items and logistics for {selectedNgo?.name}.</p>
+                <h2 className="text-[20px] font-[700] text-[#212121] dark:text-white">
+                  {t('donation.step3_title', 'Coordinate Handover')}
+                </h2>
+                <p className="text-[14px] text-[#757575] dark:text-slate-400 mt-[2px]">
+                  {t('donation.step3_subtitle', 'Review items and logistics for {{name}}.', {
+                    name: selectedNgo?.name ?? '',
+                  })}
+                </p>
             </div>
 
             <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-4 mb-6 shadow-sm">
                 <h3 className="text-xs font-bold text-[#00796B] uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <Info size={14} /> Shared Receipt Info for NGO
+                    <Info size={14} /> {t('donation.shared_receipt', 'Shared Receipt Info for NGO')}
                 </h3>
                 <div className="space-y-2">
                     {selectedFoodObjects.map(item => (
@@ -278,33 +317,102 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-6">
-                <button onClick={() => setLogistics({...logistics, mode: 'dropoff'})} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${logistics.mode === 'dropoff' ? 'bg-[#00796B] border-[#00796B] text-white shadow-md' : 'bg-white dark:bg-slate-800 border-[#EEEEEE] text-[#757575]'}`}><MapPin size={24} /><span className="font-bold text-sm">I'll Drop Off</span></button>
-                <button onClick={() => setLogistics({...logistics, mode: 'pickup'})} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${logistics.mode === 'pickup' ? 'bg-[#00796B] border-[#00796B] text-white shadow-md' : 'bg-white dark:bg-slate-800 border-[#EEEEEE] text-[#757575]'}`}><Truck size={24} /><span className="font-bold text-sm">Request Pickup</span></button>
+                <button
+                  onClick={() => setLogistics({ ...logistics, mode: 'dropoff' })}
+                  className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
+                    logistics.mode === 'dropoff'
+                      ? 'bg-[#00796B] border-[#00796B] text-white shadow-md'
+                      : 'bg-white dark:bg-slate-800 border-[#EEEEEE] text-[#757575]'
+                  }`}
+                >
+                  <MapPin size={24} />
+                  <span className="font-bold text-sm">
+                    {t('donation.mode_dropoff', "I'll Drop Off")}
+                  </span>
+                </button>
+                <button
+                  onClick={() => setLogistics({ ...logistics, mode: 'pickup' })}
+                  className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
+                    logistics.mode === 'pickup'
+                      ? 'bg-[#00796B] border-[#00796B] text-white shadow-md'
+                      : 'bg-white dark:bg-slate-800 border-[#EEEEEE] text-[#757575]'
+                  }`}
+                >
+                  <Truck size={24} />
+                  <span className="font-bold text-sm">
+                    {t('donation.mode_pickup', 'Request Pickup')}
+                  </span>
+                </button>
             </div>
 
             <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-bold mb-2 flex items-center justify-between">
-                    <span className="flex items-center gap-2"><Phone size={16} /> Contact Phone</span>
-                    <span className={`text-[10px] font-bold ${logistics.contactPhone.length === 10 ? 'text-green-600' : 'text-slate-400'}`}>
-                      {logistics.contactPhone.length}/10 digits
+                    <span className="flex items-center gap-2">
+                      <Phone size={16} /> {t('donation.contact_phone', 'Contact Phone')}
+                    </span>
+                    <span
+                      className={`text-[10px] font-bold ${
+                        logistics.contactPhone.length === 10 ? 'text-green-600' : 'text-slate-400'
+                      }`}
+                    >
+                      {logistics.contactPhone.length}/10 {t('donation.digits', 'digits')}
                     </span>
                   </label>
                   <input 
                     type="tel" 
-                    placeholder="Enter 10 digit number" 
+                    placeholder={t('donation.phone_placeholder', 'Enter 10 digit number')}
                     value={logistics.contactPhone} 
                     onChange={handlePhoneChange} 
                     className={`w-full h-[48px] px-4 rounded-xl bg-[#F5F5F5] dark:bg-slate-800 text-[#212121] dark:text-white outline-none transition-all font-medium border-2 ${logistics.contactPhone.length > 0 && logistics.contactPhone.length < 10 ? 'border-orange-300' : 'border-transparent focus:border-[#00796B]'}`} 
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                    <div><label className="block text-sm font-bold mb-2 flex items-center gap-2 text-[#212121] dark:text-white"><Calendar size={16} /> Date</label><input type="date" value={logistics.date} onChange={(e) => setLogistics({...logistics, date: e.target.value})} className="w-full h-[48px] px-4 rounded-xl bg-[#F5F5F5] dark:bg-slate-800 text-[#212121] dark:text-white outline-none transition-all font-medium border-2 border-transparent focus:border-[#00796B]" /></div>
-                    <div><label className="block text-sm font-bold mb-2 flex items-center gap-2 text-[#212121] dark:text-white"><Clock size={16} /> Time</label><input type="time" value={logistics.time} onChange={(e) => setLogistics({...logistics, time: e.target.value})} className="w-full h-[48px] px-4 rounded-xl bg-[#F5F5F5] dark:bg-slate-800 text-[#212121] dark:text-white outline-none transition-all font-medium border-2 border-transparent focus:border-[#00796B]" /></div>
+                    <div>
+                      <label className="block text-sm font-bold mb-2 flex items-center gap-2 text-[#212121] dark:text-white">
+                        <Calendar size={16} /> {t('donation.date', 'Date')}
+                      </label>
+                      <input
+                        type="date"
+                        value={logistics.date}
+                        onChange={(e) => setLogistics({ ...logistics, date: e.target.value })}
+                        className="w-full h-[48px] px-4 rounded-xl bg-[#F5F5F5] dark:bg-slate-800 text-[#212121] dark:text-white outline-none transition-all font-medium border-2 border-transparent focus:border-[#00796B]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-2 flex items-center gap-2 text-[#212121] dark:text-white">
+                        <Clock size={16} /> {t('donation.time', 'Time')}
+                      </label>
+                      <input
+                        type="time"
+                        value={logistics.time}
+                        onChange={(e) => setLogistics({ ...logistics, time: e.target.value })}
+                        className="w-full h-[48px] px-4 rounded-xl bg-[#F5F5F5] dark:bg-slate-800 text-[#212121] dark:text-white outline-none transition-all font-medium border-2 border-transparent focus:border-[#00796B]"
+                      />
+                    </div>
                 </div>
-                <div><label className="block text-sm font-bold mb-2 flex items-center gap-2 text-[#212121] dark:text-white"><MessageSquare size={16} /> Notes</label><textarea placeholder="Details for the recipient..." value={logistics.notes} onChange={(e) => setLogistics({...logistics, notes: e.target.value})} className="w-full h-[80px] p-4 rounded-xl bg-[#F5F5F5] dark:bg-slate-800 text-[#212121] dark:text-white placeholder:text-slate-400 dark:placeholder-slate-500 outline-none transition-all font-medium resize-none border-2 border-transparent focus:border-[#00796B]" /></div>
+                <div>
+                  <label className="block text-sm font-bold mb-2 flex items-center gap-2 text-[#212121] dark:text-white">
+                    <MessageSquare size={16} /> {t('donation.notes', 'Notes')}
+                  </label>
+                  <textarea
+                    placeholder={t('donation.notes_placeholder', 'Details for the recipient...')}
+                    value={logistics.notes}
+                    onChange={(e) => setLogistics({ ...logistics, notes: e.target.value })}
+                    className="w-full h-[80px] p-4 rounded-xl bg-[#F5F5F5] dark:bg-slate-800 text-[#212121] dark:text-white placeholder:text-slate-400 dark:placeholder-slate-500 outline-none transition-all font-medium resize-none border-2 border-transparent focus:border-[#00796B]"
+                  />
+                </div>
             </div>
-            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-start gap-3"><AlertCircle size={20} className="text-blue-600 shrink-0 mt-0.5" /><p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">NGOs require accurate expiry dates to prioritize distribution. We've included these in the handover details sent to <strong>{selectedNgo?.name}</strong>.</p></div>
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-start gap-3">
+              <AlertCircle size={20} className="text-blue-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
+                {t(
+                  'donation.expiry_note',
+                  "NGOs require accurate expiry dates to prioritize distribution. We've included these in the handover details sent to {{name}}.",
+                  { name: selectedNgo?.name ?? '' }
+                )}
+              </p>
+            </div>
         </div>
       );
   }
@@ -314,9 +422,30 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
       return (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center animate-in zoom-in-95 duration-300">
               <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6"><Check size={48} className="text-green-600" /></div>
-              <h2 className="text-2xl font-bold mb-2 dark:text-white">Donation Delivered!</h2>
-              <p className="text-[#757575] dark:text-slate-300 mb-8 leading-relaxed max-w-xs mx-auto"><strong>{selectedNgo?.name}</strong> has received your offer, including the full list of items and their expiry dates. They will contact you shortly.</p>
-              <div className="w-full max-w-xs space-y-3"><button onClick={() => navigate('/')} className="w-full h-[52px] bg-[#00796B] rounded-xl text-white font-bold shadow-lg">Dashboard</button><button onClick={() => window.open(`tel:${selectedNgo?.phone || '5550123000'}`)} className="w-full h-[52px] border border-[#00796B] text-[#00796B] rounded-xl font-bold flex items-center justify-center gap-2"><Phone size={18} /> Call Recipient</button></div>
+              <h2 className="text-2xl font-bold mb-2 dark:text-white">
+                {t('donation.step4_title', 'Donation Delivered!')}
+              </h2>
+              <p className="text-[#757575] dark:text-slate-300 mb-8 leading-relaxed max-w-xs mx-auto">
+                {t(
+                  'donation.step4_description',
+                  '{{name}} has received your offer, including the full list of items and their expiry dates. They will contact you shortly.',
+                  { name: selectedNgo?.name ?? '' }
+                )}
+              </p>
+              <div className="w-full max-w-xs space-y-3">
+                <button
+                  onClick={() => navigate('/')}
+                  className="w-full h-[52px] bg-[#00796B] rounded-xl text-white font-bold shadow-lg"
+                >
+                  {t('common.dashboard', 'Dashboard')}
+                </button>
+                <button
+                  onClick={() => window.open(`tel:${selectedNgo?.phone || '5550123000'}`)}
+                  className="w-full h-[52px] border border-[#00796B] text-[#00796B] rounded-xl font-bold flex items-center justify-center gap-2"
+                >
+                  <Phone size={18} /> {t('donation.call_recipient', 'Call Recipient')}
+                </button>
+              </div>
           </div>
       );
   }
@@ -325,7 +454,22 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
     <div className="h-screen bg-white dark:bg-slate-950 flex flex-col relative">
       {currentStep < 4 && (
         <header className="pt-[12px] px-[16px] flex flex-col items-center relative z-20 bg-white dark:bg-slate-950">
-            <div className="w-full h-[44px] flex items-center justify-between"><button onClick={handleBack} className="w-[44px] h-[44px] flex items-center justify-center -ml-[12px] rounded-full active:bg-slate-100 transition-colors"><ChevronLeft size={24} className="dark:text-white" /></button><h1 className="text-[18px] font-[700] absolute left-0 right-0 text-center pointer-events-none dark:text-white">{currentStep === 1 ? 'Select Safe Food' : currentStep === 2 ? 'Choose Recipient' : 'Coordinate Handover'}</h1><div className="w-[44px]" /></div>
+            <div className="w-full h-[44px] flex items-center justify-between">
+              <button
+                onClick={handleBack}
+                className="w-[44px] h-[44px] flex items-center justify-center -ml-[12px] rounded-full active:bg-slate-100 transition-colors"
+              >
+                <ChevronLeft size={24} className="dark:text-white" />
+              </button>
+              <h1 className="text-[18px] font-[700] absolute left-0 right-0 text-center pointer-events-none dark:text-white">
+                {currentStep === 1
+                  ? t('donation.header_step1', 'Select Safe Food')
+                  : currentStep === 2
+                  ? t('donation.header_step2', 'Choose Recipient')
+                  : t('donation.header_step3', 'Coordinate Handover')}
+              </h1>
+              <div className="w-[44px]" />
+            </div>
         </header>
       )}
       {currentStep < 4 && <Stepper currentStep={currentStep} />}
@@ -337,10 +481,18 @@ const Donation: React.FC<DonationProps> = ({ inventory, onDonateComplete }) => {
           <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-slate-950 pt-[16px] pb-[32px] px-[16px] shadow-[0_-4px_12px_rgba(0,0,0,0.05)] border-t dark:border-slate-800 z-30">
               <button 
                 onClick={handleContinue} 
-                disabled={(currentStep === 1 && selectedItems.length === 0) || (currentStep === 2 && !selectedNgoId) || (currentStep === 3 && (!isPhoneValid || !logistics.date || !logistics.time))} 
+                disabled={
+                  (currentStep === 1 && selectedItems.length === 0) ||
+                  (currentStep === 2 && !selectedNgoId) ||
+                  (currentStep === 3 && (!isPhoneValid || !logistics.date || !logistics.time))
+                } 
                 className="w-full h-[52px] bg-[#00796B] rounded-[10px] flex items-center justify-center text-white text-[16px] font-[600] disabled:bg-[#BDBDBD] transition-all"
               >
-                {currentStep === 3 ? (isPhoneValid ? 'Confirm Handover Info' : 'Enter 10 Digit Phone') : 'Continue'}
+                {currentStep === 3
+                  ? isPhoneValid
+                    ? t('donation.confirm_handover', 'Confirm Handover Info')
+                    : t('donation.enter_phone', 'Enter 10 Digit Phone')
+                  : t('common.continue', 'Continue')}
               </button>
           </div>
       )}

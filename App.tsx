@@ -14,6 +14,8 @@ import Badges from './components/Badges';
 import Leaderboard from './components/Leaderboard';
 import Profile from './components/Profile';
 import { Login, Signup } from './components/Auth';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 // --- Theme Context ---
 export const ThemeContext = createContext<ThemeContextType>({
@@ -65,12 +67,13 @@ const EMPTY_STATS: UserStats = {
 const Sidebar = ({ user }: { user: User | null }) => {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
   const navItems = [
-    { path: '/', icon: Home, label: 'Dashboard' },
-    { path: '/inventory', icon: Package, label: 'Inventory' },
-    { path: '/recipes', icon: ChefHat, label: 'Recipes' },
-    { path: '/donate', icon: Heart, label: 'Donate' },
-    { path: '/ngos', icon: MapPin, label: 'NGOs' },
+    { path: '/', icon: Home, label: t('common.dashboard', 'Dashboard') },
+    { path: '/inventory', icon: Package, label: t('common.inventory', 'Inventory') },
+    { path: '/recipes', icon: ChefHat, label: t('common.recipes') },
+    { path: '/donate', icon: Heart, label: t('common.donate') },
+    { path: '/ngos', icon: MapPin, label: t('common.find_ngos') },
   ];
 
   return (
@@ -78,8 +81,8 @@ const Sidebar = ({ user }: { user: User | null }) => {
       <div className="p-6 flex items-center gap-3 mb-6 group cursor-pointer" onClick={() => window.location.hash = '#/'}>
         <div className="w-10 h-10 bg-[#00796B] rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-teal-100 dark:shadow-teal-900/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300"><Leaf size={20} fill="white" /></div>
         <div>
-          <h1 className="font-bold text-xl tracking-tight text-[#212121] dark:text-slate-100 leading-none group-hover:text-[#00796B] transition-colors">SaveBite</h1>
-          <p className="text-[9px] text-[#757575] dark:text-slate-400 font-bold uppercase tracking-tighter mt-1 group-hover:translate-x-0.5 transition-transform">The right choice before waste</p>
+          <h1 className="font-bold text-xl tracking-tight text-[#212121] dark:text-slate-100 leading-none group-hover:text-[#00796B] transition-colors">{t('brand.name')}</h1>
+          <p className="text-[9px] text-[#757575] dark:text-slate-400 font-bold uppercase tracking-tighter mt-1 group-hover:translate-x-0.5 transition-transform">{t('brand.tagline')}</p>
         </div>
       </div>
       <nav className="flex-1 px-4 space-y-2">
@@ -94,6 +97,9 @@ const Sidebar = ({ user }: { user: User | null }) => {
         })}
       </nav>
       <div className="p-4 border-t border-[#EEEEEE] dark:border-slate-800 space-y-2">
+        <div className="flex justify-between items-center mb-1">
+          <LanguageSwitcher />
+        </div>
         <button onClick={toggleTheme} aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'} className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#757575] dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:shadow-md hover:scale-[1.02] active:scale-95 transition-all w-full mb-2 group">
           {theme === 'light' ? <Moon size={22} className="group-hover:rotate-[360deg] transition-transform duration-700" /> : <Sun size={22} className="group-hover:rotate-[360deg] transition-transform duration-700" />}
           <span className="group-hover:text-[#212121] dark:group-hover:text-white transition-colors">{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
@@ -113,12 +119,14 @@ const Sidebar = ({ user }: { user: User | null }) => {
 
 const BottomNav = () => {
   const location = useLocation();
+  const { t } = useTranslation();
   const navItems = [
-    { path: '/', icon: Home, label: 'Dashboard' },
-    { path: '/inventory', icon: Package, label: 'Inventory' },
-    { path: '/recipes', icon: ChefHat, label: 'Recipes' },
-    { path: '/donate', icon: Heart, label: 'Donate' },
-    { path: '/ngos', icon: MapPin, label: 'NGOs' },
+    { path: '/', icon: Home, label: t('common.dashboard') },
+    { path: '/inventory', icon: Package, label: t('common.inventory') },
+    { path: '/recipes', icon: ChefHat, label: t('common.recipes') },
+    { path: '/donate', icon: Heart, label: t('common.donate') },
+    { path: '/ngos', icon: MapPin, label: t('common.find_ngos') },
+    { path: '/profile', icon: UserIcon, label: t('common.profile', 'Profile') },
   ];
 
   return (

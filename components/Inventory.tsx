@@ -3,6 +3,7 @@ import { FoodItem, FoodCategory } from '../types';
 import { analyzeFoodImage } from '../services/geminiService';
 import { Menu, Leaf, Plus, Search, Filter, ChevronLeft, ChevronRight, AlertTriangle, Loader2, Trash2, Pencil, Camera, X, CheckSquare, Sparkles, Check, Heart, Scale, Calendar, Milk, Beef, Croissant, Wheat, Package, IceCream, Coffee, Cookie, Info, AlertOctagon, History } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface InventoryProps {
   items: FoodItem[];
@@ -272,6 +273,7 @@ const GRID_CATEGORIES = ["Produce", "Dairy", "Meat", "Grains", "Bakery", "Canned
 const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus, onDeleteItem, onEditItem }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortMode, setSortMode] = useState<'expiry' | 'name'>('expiry');
@@ -471,7 +473,11 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                     <ChevronLeft size={28} className="text-[#212121] dark:text-white" />
                 </button>
                 <h1 className="text-[24px] md:text-[32px] font-[700] text-[#212121] dark:text-white leading-tight">
-                    {isSelectionMode ? "Select Ingredients" : viewTab === 'available' ? "Food Inventory" : "Expired History"}
+                    {isSelectionMode
+                      ? t('inventory.select_ingredients', 'Select Ingredients')
+                      : viewTab === 'available'
+                      ? t('inventory.food_inventory', 'Food Inventory')
+                      : t('inventory.expired_history', 'Expired History')}
                 </h1>
             </div>
             {isSelectionMode ? (
@@ -479,7 +485,7 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                     onClick={() => { setIsSelectionMode(false); setSelectedItemIds(new Set()); }}
                     className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-200 px-[16px] h-[40px] rounded-[12px] font-semibold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition-all"
                  >
-                     Cancel
+                     {t('common.cancel', 'Cancel')}
                  </button>
             ) : (
                 <div className="flex gap-2">
@@ -488,14 +494,18 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                         className="bg-[#00796B] text-white flex items-center justify-center w-[40px] md:w-auto md:px-[16px] h-[40px] rounded-[12px] active:scale-90 hover:scale-105 hover:bg-[#00695C] transition-all shadow-sm group"
                     >
                         <Camera size={20} strokeWidth={2.5} className="group-hover:rotate-12 transition-transform" />
-                        <span className="text-[14px] font-[600] hidden md:inline ml-2">Scan</span>
+                        <span className="text-[14px] font-[600] hidden md:inline ml-2">
+                          {t('inventory.scan', 'Scan')}
+                        </span>
                     </button>
                     <button 
                         onClick={startAdd}
                         className="bg-white dark:bg-slate-800 border border-[#E0E0E0] dark:border-slate-700 text-[#212121] dark:text-white flex items-center justify-center w-[40px] md:w-auto md:px-[16px] h-[40px] rounded-[12px] active:scale-90 hover:scale-105 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm group"
                     >
                         <Plus size={20} strokeWidth={2.5} className="group-hover:rotate-90 transition-transform duration-300" />
-                        <span className="text-[14px] font-[600] hidden md:inline ml-2">Add</span>
+                        <span className="text-[14px] font-[600] hidden md:inline ml-2">
+                          {t('common.add', 'Add')}
+                        </span>
                     </button>
                 </div>
             )}
@@ -507,13 +517,13 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                 onClick={() => { setViewTab('available'); setActiveCategory('All'); }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-[10px] text-sm font-bold transition-all hover:scale-105 active:scale-95 ${viewTab === 'available' ? 'bg-white dark:bg-slate-800 text-[#00796B] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             >
-                <Package size={16} /> Available Stock
+                <Package size={16} /> {t('inventory.available_stock', 'Available Stock')}
             </button>
             <button 
                 onClick={() => { setViewTab('expired'); setActiveCategory('All'); }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-[10px] text-sm font-bold transition-all hover:scale-105 active:scale-95 ${viewTab === 'expired' ? 'bg-white dark:bg-slate-800 text-[#D32F2F] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             >
-                <History size={16} /> Expired History
+                <History size={16} /> {t('inventory.expired_history', 'Expired History')}
             </button>
         </div>
       </header>
@@ -524,7 +534,7 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
             <Search className="absolute left-[12px] top-1/2 -translate-y-1/2 text-[#757575] dark:text-slate-500 group-focus-within:text-[#00796B] transition-colors" size={20} />
             <input 
                 type="text" 
-                placeholder="Search food items..."
+                placeholder={t('inventory.search_placeholder', 'Search food items...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full h-full bg-[#F5F5F5] dark:bg-slate-800 rounded-[12px] pl-[40px] pr-[12px] text-[14px] outline-none focus:ring-2 focus:ring-[#00796B]/20 focus:bg-white dark:focus:bg-slate-700 transition-all placeholder-[#757575] dark:placeholder-slate-500 text-[#212121] dark:text-white"
@@ -537,19 +547,35 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                     className={`h-[36px] w-[36px] md:w-auto md:px-3 rounded-[8px] flex items-center justify-center gap-2 border shadow-sm transition-all hover:scale-105 active:scale-95 ${isSelectionMode ? 'bg-[#00796B] border-[#00796B] text-white' : 'bg-white dark:bg-slate-800 border-[#EEEEEE] dark:border-slate-700 text-[#212121] dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
                  >
                      <CheckSquare size={16} />
-                     <span className="hidden md:inline text-xs font-medium">Select</span>
+                     <span className="hidden md:inline text-xs font-medium">
+                       {t('common.select', 'Select')}
+                     </span>
                  </button>
                 <button 
                     onClick={(e) => { e.stopPropagation(); setShowSortMenu(!showSortMenu); }}
                     className="h-[36px] w-[90px] bg-white dark:bg-slate-800 border border-[#EEEEEE] dark:border-slate-700 rounded-[8px] flex items-center justify-center gap-2 text-[#212121] dark:text-slate-200 text-[12px] font-[500] shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-all hover:scale-105 active:scale-95"
                 >
-                    <Filter size={14} /> {sortMode === 'expiry' ? 'Expiry' : 'Name'}
+                    <Filter size={14} /> {sortMode === 'expiry' ? t('inventory.sort_expiry', 'Expiry') : t('inventory.sort_name', 'Name')}
                 </button>
             </div>
             {showSortMenu && (
                 <div className="absolute top-[40px] right-0 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-xl rounded-xl p-1 w-[120px] animate-in fade-in zoom-in-95 duration-200 z-30">
-                    <button onClick={() => setSortMode('expiry')} className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${sortMode === 'expiry' ? 'bg-[#00796B]/10 text-[#00796B]' : 'text-[#757575] dark:text-slate-400'}`}>Expiry Date</button>
-                    <button onClick={() => setSortMode('name')} className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${sortMode === 'name' ? 'bg-[#00796B]/10 text-[#00796B]' : 'text-[#757575] dark:text-slate-400'}`}>Name (A-Z)</button>
+                    <button
+                      onClick={() => setSortMode('expiry')}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${
+                        sortMode === 'expiry' ? 'bg-[#00796B]/10 text-[#00796B]' : 'text-[#757575] dark:text-slate-400'
+                      }`}
+                    >
+                      {t('inventory.sort_expiry_full', 'Expiry Date')}
+                    </button>
+                    <button
+                      onClick={() => setSortMode('name')}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${
+                        sortMode === 'name' ? 'bg-[#00796B]/10 text-[#00796B]' : 'text-[#757575] dark:text-slate-400'
+                      }`}
+                    >
+                      {t('inventory.sort_name_full', 'Name (A-Z)')}
+                    </button>
                 </div>
             )}
         </div>
@@ -593,7 +619,11 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
         {filteredItems.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center py-20 text-center opacity-50 text-[#757575] dark:text-slate-400 animate-pulse">
                 <Search size={48} className="mb-4" />
-                <p>No items found in {viewTab === 'available' ? 'Available Stock' : 'Expired History'}.</p>
+                <p>
+                  {viewTab === 'available'
+                    ? t('inventory.empty_available', 'No items found in Available Stock.')
+                    : t('inventory.empty_expired', 'No items found in Expired History.')}
+                </p>
             </div>
         ) : filteredItems.map(item => {
             const visual = getVisualDetails(item);
@@ -630,7 +660,7 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                                     className="h-[40px] px-3 bg-red-50 dark:bg-red-900/20 text-[#D32F2F] hover:bg-[#D32F2F] hover:text-white rounded-[10px] flex items-center gap-2 font-semibold text-xs active:scale-90 transition-all group-hover:shadow-md border border-transparent hover:border-[#D32F2F]"
                                 >
                                     <Heart size={16} strokeWidth={2.5} className="group-hover:scale-125 transition-transform" />
-                                    <span>Donate</span>
+                                    <span>{t('inventory.donate_cta', 'Donate')}</span>
                                 </button>
                             )}
                         </div>
@@ -652,8 +682,12 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                   </div>
                   <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Analyzing Food</h3>
                   <div className="space-y-1 mb-6">
-                      <p className="text-[#00796B] font-bold text-sm animate-pulse">AI is identifying ingredients...</p>
-                      <p className="text-xs text-slate-500">Estimating condition and shelf life</p>
+                      <p className="text-[#00796B] font-bold text-sm animate-pulse">
+                        {t('inventory.ai_identifying', 'AI is identifying ingredients...')}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {t('inventory.ai_estimating', 'Estimating condition and shelf life')}
+                      </p>
                   </div>
                   <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                       <div className="bg-[#00796B] h-full rounded-full animate-progress-indeterminate"></div>
@@ -669,7 +703,12 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                         transform-origin: left;
                     }
                   `}</style>
-                  <p className="mt-8 text-[11px] text-slate-400 font-medium italic">"Did you know? Every apple saved prevents the waste of 70 liters of water."</p>
+                  <p className="mt-8 text-[11px] text-slate-400 font-medium italic">
+                    {t(
+                      'inventory.fun_fact',
+                      '"Did you know? Every apple saved prevents the waste of 70 liters of water."'
+                    )}
+                  </p>
               </div>
           </div>
       )}
@@ -680,16 +719,24 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
               <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                   <div className="p-6">
                       <div className="flex justify-between items-center mb-6">
-                          <h3 className="text-xl font-bold dark:text-white">{editingItem ? 'Edit Item' : isFromScan ? 'Confirm Scan Results' : 'Add New Item'}</h3>
+                          <h3 className="text-xl font-bold dark:text-white">
+                            {editingItem
+                              ? t('inventory.edit_item', 'Edit Item')
+                              : isFromScan
+                              ? t('inventory.confirm_scan', 'Confirm Scan Results')
+                              : t('inventory.add_new_item', 'Add New Item')}
+                          </h3>
                           <button onClick={() => setShowManualAdd(false)} className="text-slate-400 hover:text-slate-600"><X size={24} /></button>
                       </div>
 
                       <form onSubmit={handleManualSubmit} className="space-y-4">
                           <div className="space-y-1.5">
-                              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Item Name</label>
+                              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                {t('inventory.item_name', 'Item Name')}
+                              </label>
                               <input 
                                 ref={manualNameRef}
-                                type="text" required placeholder="e.g., Organic Bananas"
+                                type="text" required placeholder={t('inventory.item_name_placeholder', 'e.g., Organic Bananas')}
                                 value={manualForm.name} onChange={e => setManualForm({...manualForm, name: e.target.value})}
                                 className="w-full h-[52px] px-4 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-[#00796B] outline-none transition-all dark:text-white"
                               />
@@ -697,14 +744,18 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
 
                           <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-1.5">
-                                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Quantity</label>
+                                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                    {t('inventory.quantity', 'Quantity')}
+                                  </label>
                                   <input type="number" step="any" required
                                       value={manualForm.quantity} onChange={e => setManualForm({...manualForm, quantity: e.target.value})}
                                       className="w-full h-[52px] px-4 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-[#00796B] outline-none transition-all dark:text-white"
                                   />
                               </div>
                               <div className="space-y-1.5">
-                                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Unit</label>
+                                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                    {t('inventory.unit', 'Unit')}
+                                  </label>
                                   <select value={manualForm.unit} onChange={e => setManualForm({...manualForm, unit: e.target.value})}
                                       className="w-full h-[52px] px-4 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-[#00796B] outline-none transition-all dark:text-white"
                                   >
@@ -714,7 +765,9 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                           </div>
 
                           <div className="space-y-1.5">
-                              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Category</label>
+                              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                {t('inventory.category', 'Category')}
+                              </label>
                               <div className="grid grid-cols-4 gap-2">
                                   {GRID_CATEGORIES.map(cat => (
                                       <button key={cat} type="button" onClick={() => setManualForm({...manualForm, category: cat})}
@@ -727,14 +780,20 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
                           </div>
 
                           <div className="space-y-1.5">
-                              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Expiry Date</label>
+                              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                {t('inventory.expiry_date', 'Expiry Date')}
+                              </label>
                               <input type="date" required value={manualForm.expiryDate} onChange={e => setManualForm({...manualForm, expiryDate: e.target.value})}
                                   className="w-full h-[52px] px-4 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-[#00796B] outline-none transition-all dark:text-white"
                               />
                           </div>
 
                           <button type="submit" className="w-full h-[56px] bg-[#00796B] text-white rounded-xl font-bold text-lg shadow-lg hover:bg-[#00695C] transition-all active:scale-95 mt-4">
-                              {editingItem ? 'Save Changes' : isFromScan ? 'Confirm Results' : 'Add to Inventory'}
+                              {editingItem
+                                ? t('inventory.save_changes', 'Save Changes')
+                                : isFromScan
+                                ? t('inventory.confirm_results', 'Confirm Results')
+                                : t('inventory.add_to_inventory', 'Add to Inventory')}
                           </button>
                       </form>
                   </div>
@@ -820,7 +879,9 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
           <div className="fixed bottom-24 md:bottom-8 right-6 z-40 animate-in zoom-in slide-in-from-bottom-4">
               <button onClick={() => { navigate('/recipes', { state: { ingredients: items.filter(i => selectedItemIds.has(i.id)).map(i => i.name).join(', ') } }); }} className="bg-[#00796B] text-white px-6 py-4 rounded-2xl shadow-xl shadow-teal-500/30 flex items-center gap-3 font-bold text-lg hover:scale-105 active:scale-95 transition-all group">
                   <Sparkles fill="white" size={24} className="group-hover:rotate-12 transition-transform" />
-                  <span>Cook {selectedItemIds.size} Items</span>
+                  <span>
+                    {t('inventory.cook_items', 'Cook {{count}} Items', { count: selectedItemIds.size })}
+                  </span>
               </button>
           </div>
       )}

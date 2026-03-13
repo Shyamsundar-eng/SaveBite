@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthState, User as UserType } from '../types';
 import { Loader2, Mail, Lock, User, ArrowRight, CheckCircle, Leaf, Sparkles, X, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface AuthProps {
   onLogin: (state: AuthState) => void;
@@ -20,6 +21,7 @@ const GoogleIcon = () => (
 );
 
 const AuthLayout: React.FC<{ children: React.ReactNode, title: string, subtitle: string }> = ({ children, title, subtitle }) => {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen w-full flex bg-white dark:bg-slate-950 transition-colors duration-300">
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 lg:px-20 py-10 bg-white dark:bg-slate-950">
@@ -29,8 +31,8 @@ const AuthLayout: React.FC<{ children: React.ReactNode, title: string, subtitle:
               <Leaf size={20} fill="white" />
             </div>
             <div>
-              <h1 className="font-bold text-xl tracking-tight text-[#212121] dark:text-white leading-none">SaveBite</h1>
-              <p className="text-[9px] text-[#757575] dark:text-slate-500 font-bold uppercase tracking-tighter mt-1">The right choice before waste</p>
+              <h1 className="font-bold text-xl tracking-tight text-[#212121] dark:text-white leading-none">{t('brand.name')}</h1>
+              <p className="text-[9px] text-[#757575] dark:text-slate-500 font-bold uppercase tracking-tighter mt-1">{t('brand.tagline')}</p>
             </div>
           </div>
           <div className="mb-8">
@@ -46,9 +48,14 @@ const AuthLayout: React.FC<{ children: React.ReactNode, title: string, subtitle:
         </div>
         <div className="relative z-10 p-12 text-white max-w-lg">
           <div className="mb-6 w-16 h-1 bg-[#00796B] rounded-full"></div>
-          <h2 className="text-5xl font-black leading-tight mb-2">SaveBite</h2>
-          <p className="text-xl font-bold text-teal-400 uppercase tracking-widest mb-6">The right choice before waste</p>
-          <p className="text-lg text-white/90 leading-relaxed mb-8">Turn your excess food into meals, not waste. Track inventory, donate to NGOs, and save the planet—one bite at a time.</p>
+          <h2 className="text-5xl font-black leading-tight mb-2">{t('brand.name')}</h2>
+          <p className="text-xl font-bold text-teal-400 uppercase tracking-widest mb-6">{t('brand.tagline')}</p>
+          <p className="text-lg text-white/90 leading-relaxed mb-8">
+            {t(
+              'auth.hero_copy',
+              'Turn your excess food into meals, not waste. Track inventory, donate to NGOs, and save the planet—one bite at a time.'
+            )}
+          </p>
         </div>
       </div>
     </div>
@@ -56,6 +63,7 @@ const AuthLayout: React.FC<{ children: React.ReactNode, title: string, subtitle:
 };
 
 export const Login: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPasswordLogin, onGoogleLogin }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -89,7 +97,7 @@ export const Login: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPasswordL
   };
 
   return (
-    <AuthLayout title="Welcome Back" subtitle="Log in to manage your inventory.">
+    <AuthLayout title={t('auth.login_title')} subtitle={t('auth.login_subtitle')}>
         {error && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium flex items-center gap-3 animate-in slide-in-from-top-2 border border-red-100 dark:border-red-900/30">
             <div className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></div>
@@ -104,7 +112,7 @@ export const Login: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPasswordL
                 disabled={googleLoading || loading}
                 className="w-full bg-white dark:bg-slate-800 text-[#757575] dark:text-slate-300 border border-slate-200 dark:border-slate-700 py-3.5 rounded-xl font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-3 relative overflow-hidden active:scale-95"
             >
-                {googleLoading ? <Loader2 className="animate-spin text-[#00796B]" /> : <><GoogleIcon /><span>Sign in with Google</span></>}
+                {googleLoading ? <Loader2 className="animate-spin text-[#00796B]" /> : <><GoogleIcon /><span>{t('auth.google_login')}</span></>}
             </button>
 
             <div className="relative flex py-2 items-center">
@@ -115,30 +123,30 @@ export const Login: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPasswordL
 
             <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">Email</label>
+                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.email_label')}</label>
                 <div className="relative">
                 <Mail className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-[#BDBDBD] dark:placeholder:text-slate-600" placeholder="name@example.com" required />
                 </div>
             </div>
             <div className="space-y-1.5">
-                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">Password</label>
+                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.password_label')}</label>
                 <div className="relative">
                 <Lock className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600" placeholder="••••••••" required />
                 </div>
             </div>
             <button type="submit" disabled={loading || googleLoading} className="w-full bg-[#00796B] text-white py-4 rounded-xl font-bold shadow-lg shadow-teal-200 dark:shadow-teal-900/40 hover:bg-[#00695C] transition-all active:scale-95 flex items-center justify-center gap-2">
-                {loading ? <Loader2 className="animate-spin" /> : <>Log In <ArrowRight size={20} /></>}
+                {loading ? <Loader2 className="animate-spin" /> : <>{t('auth.login_button')} <ArrowRight size={20} /></>}
             </button>
             </form>
         </div>
 
-        <div className="mt-8 text-center"><p className="text-[#757575] dark:text-slate-400">Don't have an account? <button onClick={onToggle} className="text-[#00796B] font-bold hover:underline">Sign Up</button></p></div>
+        <div className="mt-8 text-center"><p className="text-[#757575] dark:text-slate-400">{t('auth.no_account')} <button onClick={onToggle} className="text-[#00796B] font-bold hover:underline">{t('auth.signup_link')}</button></p></div>
         
         {(
             <div className="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-500">
-               <p className="text-xs text-center text-[#9E9E9E] dark:text-slate-500 mb-3 uppercase tracking-wider font-bold flex items-center justify-center gap-2"><Sparkles size={12} fill="currentColor" /> Hackathon Demo Shortcut <Sparkles size={12} fill="currentColor" /></p>
+               <p className="text-xs text-center text-[#9E9E9E] dark:text-slate-500 mb-3 uppercase tracking-wider font-bold flex items-center justify-center gap-2"><Sparkles size={12} fill="currentColor" /> {t('auth.demo_shortcut')} <Sparkles size={12} fill="currentColor" /></p>
                <button onClick={() => { setEmail('demo@ecotable.dev'); setPassword('password123'); }} className="w-full py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-xs font-mono border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"><span>demo@ecotable.dev</span><span className="w-1 h-1 bg-slate-400 rounded-full"></span><span>password123</span></button>
             </div>
         )}
@@ -148,6 +156,7 @@ export const Login: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPasswordL
 };
 
 export const Signup: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPasswordSignup, onGoogleLogin }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -182,7 +191,7 @@ export const Signup: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPassword
   };
 
   return (
-    <AuthLayout title="Create Account" subtitle="Join the zero-waste movement today.">
+    <AuthLayout title={t('auth.signup_title')} subtitle={t('auth.signup_subtitle')}>
          {error && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium flex items-center gap-3 animate-in slide-in-from-top-2 border border-red-100 dark:border-red-900/30">
             <div className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></div>
@@ -203,32 +212,32 @@ export const Signup: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPassword
 
             <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">Full Name</label>
+                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.full_name_label')}</label>
                 <div className="relative">
                 <User className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-[#BDBDBD] dark:placeholder:text-slate-600" placeholder="Jane Doe" required />
                 </div>
             </div>
             <div className="space-y-1.5">
-                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">Email</label>
+                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.email_label')}</label>
                 <div className="relative">
                 <Mail className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-[#BDBDBD] dark:placeholder:text-slate-600" placeholder="chef@example.com" required />
                 </div>
             </div>
             <div className="space-y-1.5">
-                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">Password</label>
+                <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.password_label')}</label>
                 <div className="relative">
                 <Lock className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600" placeholder="••••••••" required />
                 </div>
             </div>
             <button type="submit" disabled={loading || googleLoading} className="w-full bg-[#00796B] text-white py-4 rounded-xl font-bold shadow-lg shadow-teal-200 dark:shadow-teal-900/40 hover:bg-[#00695C] transition-colors flex items-center justify-center gap-2 active:scale-95">
-                {loading ? <Loader2 className="animate-spin" /> : <>Create Account <CheckCircle size={20} /></>}
+                {loading ? <Loader2 className="animate-spin" /> : <>{t('auth.signup_button')} <CheckCircle size={20} /></>}
             </button>
             </form>
         </div>
-        <div className="mt-8 text-center"><p className="text-[#757575] dark:text-slate-400">Already have an account? <button onClick={onToggle} className="text-[#00796B] font-bold hover:underline">Log In</button></p></div>
+        <div className="mt-8 text-center"><p className="text-[#757575] dark:text-slate-400">{t('auth.have_account')} <button onClick={onToggle} className="text-[#00796B] font-bold hover:underline">{t('auth.login_link')}</button></p></div>
     </AuthLayout>
   );
 };
