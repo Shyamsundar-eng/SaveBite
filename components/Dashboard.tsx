@@ -175,40 +175,38 @@ const Dashboard: React.FC<DashboardProps> = ({ user, stats, inventory }) => {
   };
 
   return (
-    <div className="flex flex-col pt-[20px] md:pt-0 px-[16px] md:px-0 gap-[24px] animate-in fade-in duration-500 relative">
+    <div className="flex flex-col gap-6 md:gap-8 animate-page-in relative">
       {showConfetti && <ConfettiRain />}
 
       {/* Header Summary Section */}
-      <div className="flex flex-wrap justify-between items-start gap-4 mt-2">
-          <div className="flex-1 min-w-[280px]">
-            <h2 className="font-bold text-[32px] md:text-[40px] text-[#212121] dark:text-white leading-[1.2] mb-[8px]">
-                {t('common.welcome_back')}<br />{user?.name?.split(' ')[0] || 'Chef'} 👋
+      <div className="flex flex-wrap justify-between items-start gap-4">
+          <div className="flex-1 min-w-[260px]">
+            <h2 className="font-bold text-3xl md:text-4xl text-[#212121] dark:text-white leading-tight mb-2 tracking-tight">
+                {t('common.welcome_back')}<br /><span className="text-[#00796B] dark:text-teal-400">{user?.name?.split(' ')[0] || 'Chef'}</span> 👋
             </h2>
             
-            {/* Constant Motivational Green Text (Cycles every 10s) - Increased Size */}
-            <div className={`flex items-center gap-3 font-bold transition-all duration-500 transform ${quoteFade ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'} ${msgStyles.headerText} text-[16px] md:text-[22px] leading-snug`}>
-               <Sparkles size={24} fill="currentColor" className="animate-pulse shrink-0" />
+            <div className={`flex items-center gap-3 font-semibold transition-all duration-500 ${quoteFade ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'} ${msgStyles.headerText} text-[15px] md:text-[18px] leading-snug`}>
+               <Sparkles size={20} fill="currentColor" className="animate-pulse shrink-0" />
                <span>{MOTIVATIONAL_QUOTES[quoteIndex]}</span>
             </div>
             
-            {/* Interactive Appreciation Bubble */}
-            <div className={`h-10 mt-4 transition-all duration-500 transform overflow-hidden ${appreciationMsg ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'}`}>
-               <div className={`inline-flex items-center gap-2 ${msgStyles.bg} ${msgStyles.text} px-4 py-2 rounded-2xl text-xs font-bold shadow-sm border ${msgStyles.border}`}>
-                  <Sparkles size={14} className="animate-pulse" />
+            <div className={`min-h-[40px] mt-3 transition-all duration-500 overflow-hidden ${appreciationMsg ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none h-0 mt-0'}`}>
+               <div className={`inline-flex items-center gap-2 ${msgStyles.bg} ${msgStyles.text} px-4 py-2 rounded-xl text-xs font-semibold border ${msgStyles.border}`}>
+                  <Sparkles size={14} className="animate-pulse shrink-0" />
                   {appreciationMsg}
                </div>
             </div>
           </div>
           <button 
             onClick={() => handleQuickAction('/inventory')}
-            className="bg-[#00796B] hover:bg-[#00695C] text-white font-bold text-[16px] px-[24px] py-[14px] rounded-[22px] shadow-lg active:scale-95 hover:scale-[1.02] hover:-translate-y-0.5 transition-all min-h-[52px] whitespace-nowrap flex items-center justify-center gap-2 border-2 border-teal-600/20 group"
+            className="bg-[#00796B] hover:bg-[#00695C] text-white font-bold text-[15px] px-5 py-3 rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-teal-500/30 active:scale-[0.98] hover:-translate-y-0.5 transition-all min-h-[48px] whitespace-nowrap flex items-center justify-center gap-2"
           >
             <Plus size={20} strokeWidth={2.5} className="group-hover:rotate-90 transition-transform duration-300" /> {t('common.add_food')}
           </button>
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-[16px]">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         {[
           { icon: Utensils, label: t('stats.meals_saved'), value: stats.mealsSaved, color: 'bg-[#00796B]', prefix: '', suffix: '', decimals: 0 },
           { icon: Leaf, label: t('stats.co2_prevented'), value: stats.co2Saved, color: 'bg-[#43A047]', prefix: '', suffix: ' kg', decimals: 1 },
@@ -218,41 +216,41 @@ const Dashboard: React.FC<DashboardProps> = ({ user, stats, inventory }) => {
           <button 
             key={i} 
             onClick={() => handleStatClick(stat.label)}
-            className="text-left bg-white dark:bg-slate-800 rounded-[20px] p-[16px] shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between min-h-[120px] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group overflow-hidden relative active:scale-[0.98]"
+            className="card-hover text-left bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between min-h-[112px] group overflow-hidden relative active:scale-[0.99]"
           >
-            <div className={`w-[48px] h-[48px] rounded-full ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
-                <stat.icon size={24} color="white" />
+            <div className={`w-11 h-11 rounded-xl ${stat.color} flex items-center justify-center group-hover:scale-105 transition-transform duration-200 shadow-sm`}>
+                <stat.icon size={22} color="white" />
             </div>
-            <div>
-                <div className="font-bold text-[24px] text-[#212121] dark:text-white mt-[12px]">
+            <div className="mt-3">
+                <div className="font-bold text-xl text-[#212121] dark:text-white">
                     <AnimatedCounter value={stat.value} prefix={stat.prefix} suffix={stat.suffix} decimals={stat.decimals} />
                 </div>
-                <div className="font-normal text-[14px] text-[#757575] dark:text-slate-400 mt-1">{stat.label}</div>
+                <div className="text-[13px] text-slate-500 dark:text-slate-400 mt-0.5">{stat.label}</div>
             </div>
           </button>
         ))}
       </div>
 
       <div>
-        <h3 className="font-bold text-[20px] text-[#212121] dark:text-white mb-[16px]">{t('common.quick_actions', 'Quick Actions')}</h3>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-[12px]">
+        <h3 className="font-bold text-lg text-[#212121] dark:text-white mb-3">{t('common.quick_actions', 'Quick Actions')}</h3>
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
             {[
-                { icon: Plus, color: '#00796B', bg: 'bg-teal-50 dark:bg-teal-900/20', border: 'border-teal-200 dark:border-teal-800', title: t('common.add_item'), path: '/inventory', state: { action: 'add' } },
-                { icon: Camera, color: '#0288D1', bg: 'bg-sky-50 dark:bg-sky-900/20', border: 'border-sky-200 dark:border-sky-800', title: t('common.scan_food'), path: '/inventory', state: { action: 'scan' } },
-                { icon: Heart, color: '#D32F2F', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-200 dark:border-red-800', title: t('common.donate'), path: '/donate' },
-                { icon: BookOpen, color: '#E65100', bg: 'bg-orange-50 dark:bg-orange-900/20', border: 'border-orange-200 dark:border-orange-800', title: t('common.recipes'), path: '/recipes' },
-                { icon: MapPin, color: '#7B1FA2', bg: 'bg-purple-50 dark:bg-purple-900/20', border: 'border-purple-200 dark:border-purple-800', title: t('common.find_ngos'), path: '/ngos' },
-                { icon: BarChart3, color: '#455A64', bg: 'bg-slate-100 dark:bg-slate-800', border: 'border-slate-200 dark:border-slate-700', title: t('common.analytics'), path: '/analytics' }
+                { icon: Plus, color: '#00796B', bg: 'bg-teal-50 dark:bg-teal-900/20', border: 'border-teal-200/80 dark:border-teal-800', title: t('common.add_item'), path: '/inventory', state: { action: 'add' } },
+                { icon: Camera, color: '#0288D1', bg: 'bg-sky-50 dark:bg-sky-900/20', border: 'border-sky-200/80 dark:border-sky-800', title: t('common.scan_food'), path: '/inventory', state: { action: 'scan' } },
+                { icon: Heart, color: '#D32F2F', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-200/80 dark:border-red-800', title: t('common.donate'), path: '/donate' },
+                { icon: BookOpen, color: '#E65100', bg: 'bg-orange-50 dark:bg-orange-900/20', border: 'border-orange-200/80 dark:border-orange-800', title: t('common.recipes'), path: '/recipes' },
+                { icon: MapPin, color: '#7B1FA2', bg: 'bg-purple-50 dark:bg-purple-900/20', border: 'border-purple-200/80 dark:border-purple-800', title: t('common.find_ngos'), path: '/ngos' },
+                { icon: BarChart3, color: '#455A64', bg: 'bg-slate-100 dark:bg-slate-800/80', border: 'border-slate-200 dark:border-slate-700', title: t('common.analytics'), path: '/analytics' }
             ].map((action, i) => (
                 <button 
                     key={i}
                     onClick={() => handleQuickAction(action.path, action.state)}
-                    className={`${action.bg} ${action.border} relative h-[110px] rounded-[24px] flex flex-col items-center justify-center p-2 transition-all hover:shadow-xl hover:-translate-y-1 active:scale-95 group border`}
+                    className={`card-hover ${action.bg} ${action.border} relative h-[100px] md:h-[108px] rounded-xl flex flex-col items-center justify-center p-2 border active:scale-[0.98] group`}
                 >
-                    <div className="w-[48px] h-[48px] rounded-[18px] bg-white dark:bg-slate-950 shadow-sm flex items-center justify-center mb-2.5 group-hover:scale-110 group-hover:shadow-md transition-all duration-300">
-                        <action.icon size={24} strokeWidth={2.5} style={{ color: action.color }} />
+                    <div className="w-11 h-11 rounded-xl bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center mb-2 group-hover:scale-105 transition-transform duration-200">
+                        <action.icon size={22} strokeWidth={2.5} style={{ color: action.color }} />
                     </div>
-                    <span className="text-[13px] font-bold text-slate-700 dark:text-slate-200 leading-tight text-center">
+                    <span className="text-[12px] font-semibold text-slate-700 dark:text-slate-200 leading-tight text-center">
                         {action.title}
                     </span>
                 </button>
@@ -260,16 +258,16 @@ const Dashboard: React.FC<DashboardProps> = ({ user, stats, inventory }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20 md:pb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-24 md:pb-4">
           <div>
-            <div className="flex justify-between items-baseline mb-[12px]">
-                <h3 className="font-bold text-[20px] text-[#212121] dark:text-white">{t('common.expiring_soon')}</h3>
-                <button onClick={() => navigate('/inventory')} className="text-[#00796B] text-[14px] font-medium hover:underline hover:scale-105 transition-transform active:scale-95">{t('common.view_all')}</button>
+            <div className="flex justify-between items-baseline mb-3">
+                <h3 className="font-bold text-lg text-[#212121] dark:text-white">{t('common.expiring_soon')}</h3>
+                <button onClick={() => navigate('/inventory')} className="text-[#00796B] text-sm font-semibold hover:underline active:scale-95 transition-transform">{t('common.view_all')}</button>
             </div>
-            <div className="flex flex-col gap-[12px]">
+            <div className="flex flex-col gap-2">
                 {expiringItems.length === 0 ? (
-                    <div className="bg-white dark:bg-slate-800 rounded-[12px] p-8 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center">
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">{t('common.no_expiring_items')}</p>
+                    <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center">
+                        <p className="font-medium text-slate-600 dark:text-slate-300">{t('common.no_expiring_items')}</p>
                     </div>
                 ) : (
                     expiringItems.map(item => {
@@ -277,19 +275,19 @@ const Dashboard: React.FC<DashboardProps> = ({ user, stats, inventory }) => {
                         return (
                             <button
                                 key={item.id}
-                                className="w-full text-left bg-white dark:bg-slate-800 rounded-[12px] p-[12px] shadow-sm border border-slate-200 dark:border-slate-700 flex items-center hover:bg-slate-50 dark:hover:bg-slate-700 hover:shadow-md hover:-translate-x-1 transition-all group active:scale-[0.99]" 
+                                className="card-hover w-full text-left bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center gap-3 active:scale-[0.99]" 
                                 onClick={() => navigate('/inventory')}
                             >
-                                <div className={`w-[48px] h-[48px] rounded-[8px] mr-[12px] flex items-center justify-center text-2xl group-hover:scale-110 transition-transform ${isExpired ? 'bg-red-50 dark:bg-red-900/20' : 'bg-yellow-50 dark:bg-yellow-900/20'}`}>
+                                <div className={`w-11 h-11 rounded-xl shrink-0 flex items-center justify-center text-xl ${isExpired ? 'bg-red-50 dark:bg-red-900/20' : 'bg-amber-50 dark:bg-amber-900/20'}`}>
                                     {isExpired ? '⚠️' : '🕒'}
                                 </div>
-                                <div className="flex-1">
-                                    <div className="font-semibold text-[16px] text-[#212121] dark:text-slate-100">{item.name}</div>
-                                    <span className={`${isExpired ? 'text-[#D32F2F]' : 'text-[#C2410C]'} text-[12px] font-medium`}>
+                                <div className="flex-1 min-w-0">
+                                    <div className="font-semibold text-[15px] text-[#212121] dark:text-slate-100 truncate">{item.name}</div>
+                                    <span className={`${isExpired ? 'text-red-600 dark:text-red-400' : 'text-amber-700 dark:text-amber-400'} text-xs font-medium`}>
                                         {isExpired ? t('common.expired') : t('common.expires_in_days', { count: item.daysLeft })}
                                     </span>
                                 </div>
-                                <ChevronRight size={18} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-1 transition-all" />
+                                <ChevronRight size={18} className="text-slate-400 shrink-0" />
                             </button>
                         );
                     })
@@ -297,19 +295,19 @@ const Dashboard: React.FC<DashboardProps> = ({ user, stats, inventory }) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
               <div>
-                <h3 className="font-bold text-[20px] text-[#212121] dark:text-white mb-3">{t('common.community_leaderboard')}</h3>
-                <div className="flex flex-col gap-[12px]">
+                <h3 className="font-bold text-lg text-[#212121] dark:text-white mb-3">{t('common.community_leaderboard')}</h3>
+                <div className="flex flex-col gap-2">
                     {leaderboardWidgetData.map((leader, i) => (
-                        <div key={i} className={`flex items-center p-3 rounded-xl transition-all cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 hover:shadow-md group ${leader.isCurrentUser ? 'bg-[#00796B]/10 border border-[#00796B]/20 shadow-sm' : ''}`}>
-                            <div className="w-[24px] font-black text-[14px] text-[#757575] text-center">{leader.rank}</div>
-                            <img src={leader.avatar} alt={leader.name} className="w-[36px] h-[36px] rounded-full mx-[12px] bg-slate-200 border border-slate-100 dark:border-slate-700 shadow-sm" />
-                            <div className="flex-1 font-bold text-[14px] dark:text-white group-hover:text-[#00796B] transition-colors">{leader.name} {leader.isCurrentUser && `(${t('common.you')})`}</div>
-                            <div className="font-black text-[14px] text-[#00796B]">{leader.xp.toLocaleString()}</div>
+                        <div key={i} className={`flex items-center p-3 rounded-xl transition-colors ${leader.isCurrentUser ? 'bg-[#00796B]/10 dark:bg-[#00796B]/15 border border-[#00796B]/20' : 'hover:bg-slate-50 dark:hover:bg-slate-800/80'}`}>
+                            <span className="w-6 font-bold text-sm text-slate-500 dark:text-slate-400 text-center shrink-0">{leader.rank}</span>
+                            <img src={leader.avatar} alt={leader.name} className="w-9 h-9 rounded-full mx-3 bg-slate-200 dark:bg-slate-700 object-cover shrink-0 ring-2 ring-white dark:ring-slate-800" />
+                            <div className="flex-1 font-semibold text-sm text-[#212121] dark:text-white truncate">{leader.name} {leader.isCurrentUser && <span className="text-[#00796B]">({t('common.you')})</span>}</div>
+                            <span className="font-bold text-sm text-[#00796B] shrink-0">{leader.xp.toLocaleString()} XP</span>
                         </div>
                     ))}
-                    <button onClick={() => navigate('/leaderboard')} className="text-center text-sm font-bold text-[#00796B] mt-2 flex items-center justify-center gap-1 hover:gap-3 transition-all hover:underline active:scale-95">{t('common.full_community_ranking')} <ChevronRight size={16} /></button>
+                    <button onClick={() => navigate('/leaderboard')} className="text-sm font-semibold text-[#00796B] mt-1 flex items-center justify-center gap-1 hover:underline active:scale-95">{t('common.full_community_ranking')} <ChevronRight size={14} /></button>
                 </div>
               </div>
           </div>
