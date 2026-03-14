@@ -125,14 +125,14 @@ export const Login: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPasswordL
             <div className="space-y-1.5">
                 <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.email_label')}</label>
                 <div className="relative">
-                <Mail className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-[#BDBDBD] dark:placeholder:text-slate-600" placeholder="name@example.com" required />
                 </div>
             </div>
             <div className="space-y-1.5">
                 <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.password_label')}</label>
                 <div className="relative">
-                <Lock className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600" placeholder="••••••••" required />
                 </div>
             </div>
@@ -214,21 +214,21 @@ export const Signup: React.FC<AuthProps> = ({ onLogin, onToggle, onEmailPassword
             <div className="space-y-1.5">
                 <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.full_name_label')}</label>
                 <div className="relative">
-                <User className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-[#BDBDBD] dark:placeholder:text-slate-600" placeholder="Jane Doe" required />
                 </div>
             </div>
             <div className="space-y-1.5">
                 <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.email_label')}</label>
                 <div className="relative">
-                <Mail className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-[#BDBDBD] dark:placeholder:text-slate-600" placeholder="chef@example.com" required />
                 </div>
             </div>
             <div className="space-y-1.5">
                 <label className="text-sm font-bold text-[#212121] dark:text-slate-200 ml-1">{t('auth.password_label')}</label>
                 <div className="relative">
-                <Lock className="absolute left-4 top-3.5 text-[#9E9E9E] dark:text-slate-500" size={20} />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9E9E9E] dark:text-slate-500" size={20} />
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] dark:bg-slate-900 border border-transparent focus:bg-white dark:focus:bg-slate-800 focus:border-[#00796B] rounded-xl outline-none transition-all text-[#212121] dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600" placeholder="••••••••" required />
                 </div>
             </div>
