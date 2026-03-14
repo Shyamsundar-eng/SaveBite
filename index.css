@@ -1,90 +1,9 @@
-/* SaveBite – Design tokens & global polish */
+/* App styles - Tailwind handles most styling via CDN in index.html */
 
-:root {
-  /* Brand */
-  --color-primary: #00796B;
-  --color-primary-hover: #00695C;
-  --color-primary-muted: rgba(0, 121, 107, 0.1);
-  /* Surfaces */
-  --color-surface: #FAFAFA;
-  --color-surface-elevated: #FFFFFF;
-  --color-border: #EEEEEE;
-  --color-text: #212121;
-  --color-text-muted: #757575;
-  /* Radii */
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 24px;
-  /* Motion */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-fast: 200ms;
-  --duration-normal: 300ms;
-}
-
-.dark {
-  --color-surface: #0f172a;
-  --color-surface-elevated: #1e293b;
-  --color-border: #334155;
-  --color-text: #f1f5f9;
-  --color-text-muted: #94a3b8;
-  --color-primary-muted: rgba(0, 121, 107, 0.15);
-}
-
-/* Smooth scroll and reduced motion respect */
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Focus visible for keyboard accessibility */
+/* Focus visible for keyboard accessibility (avoid ring on mouse click) */
 button:focus-visible,
 a:focus-visible,
-[role="button"]:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--color-primary);
+[role="button"]:focus-visible {
+  outline: 2px solid #00796B;
   outline-offset: 2px;
-}
-
-/* Tap highlight for touch devices */
-button, a, [role="button"] {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Card hover lift – reusable */
-.card-hover {
-  transition: transform var(--duration-normal) var(--ease-out-expo),
-              box-shadow var(--duration-normal) var(--ease-out-expo);
-}
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.12);
-}
-.dark .card-hover:hover {
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
-}
-
-/* Page enter animation */
-@keyframes page-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-page-in {
-  animation: page-in 0.4s var(--ease-out-expo) forwards;
 }
