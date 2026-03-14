@@ -529,7 +529,7 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
       </header>
 
       {/* Search & Controls Row */}
-      <div className="px-[16px] md:px-0 mt-[16px] flex gap-[12px] relative z-20">
+      <div className="px-[16px] md:px-0 mt-[16px] flex gap-[12px] items-center relative z-20">
         <div className="flex-1 relative h-[44px] group">
             <Search className="absolute left-[12px] top-1/2 -translate-y-1/2 text-[#757575] dark:text-slate-500 group-focus-within:text-[#00796B] transition-colors" size={20} />
             <input 
@@ -815,7 +815,7 @@ const Inventory: React.FC<InventoryProps> = ({ items, onAddItem, onUpdateStatus,
           <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
               <div className="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
                   <div className="p-6">
-                      <div className="flex justify-between items-start mb-4">
+                      <div className="flex justify-between items-center mb-4">
                           <div className="flex items-center gap-3">
                               <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center text-3xl shadow-inner animate-in spin-in-12 duration-500">
                                   {getVisualDetails(detailItem).emoji}

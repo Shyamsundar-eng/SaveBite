@@ -266,7 +266,7 @@ const Donation: React.FC<DonationProps> = ({ inventory, stats, onDonateComplete 
 
   const renderStep2 = () => (
     <div className="flex flex-col h-full overflow-hidden">
-        <div className="px-[16px] mt-[24px] mb-[16px] flex justify-between items-end">
+        <div className="px-[16px] mt-[24px] mb-[16px] flex justify-between items-center">
              <div>
                 <h2 className="text-[20px] font-[700] text-[#212121] dark:text-white">
                   {t('donation.step2_title', 'Choose Recipient')}
