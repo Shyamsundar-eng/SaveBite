@@ -4,7 +4,6 @@
 SaveBite is a lightweight food-inventory and donation demo app that helps you track items, reduce waste, find NGOs, and (optionally) use Gemini-powered features like food scanning and recipe generation.
 
 ## Features
-
 - **Auth (local demo)**: email/password signup + login, plus a demo shortcut account.
 - **Inventory**: add/edit/delete items, filter/search, see expiry status, swipe actions.
 - **Donations**: pick safe (non-expired) items, choose an NGO, and confirm handover.
@@ -23,6 +22,7 @@ SaveBite is a lightweight food-inventory and donation demo app that helps you tr
 ```bash
 npm install
 ```
+
 
 ### Configure (optional AI features)
 
@@ -70,6 +70,6 @@ npm run preview
 
 ## Notes
 
-- This repo uses a CDN Tailwind setup for styling plus a small `index.css` for accessibility focus styling.
+- This repo uses CDN Tailwind setup for styling plus a small `index.css` for accessibility focus styling.
 - If `GEMINI_API_KEY` is not set, AI actions will show a friendly message instead of crashing the app.
 - If Firebase env vars are not set, the app will still render but Firebase auth flows will fail at runtime; for a quick demo, you can continue using the built-in demo login (`demo@ecotable.dev` / `password123`).
